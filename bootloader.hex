@@ -2,29 +2,59 @@
 [org 0x7C00]
 
 start:
+    ;attempt to start video mode
+    mov ah,0x00
+    mov al,0x13
+    int 10h
+
+    ;load message and print it
     mov si,MSG
+    mov cl,0x0B  ;set initial cursor horizontial shift
     call print_string
     jmp $
 
-print_string:           ; Expects null terminated message in si
+print_string:           ; Expects null terminated message in si    
     mov al,[si]
     or al,al
     jz  .end
     inc si
+    call update_cursor
     call print_char
     jmp print_string
 .end:
     retn
 
+update_cursor:
+    mov ah,0x02 ;set mode
+    mov dl,cl  ;set position from counter
+    mov dh,0x09  ;fixed vertical position
+    int 10h
+    inc cl
+    retn
+
 print_char:
     mov ah,0x0E         ; Specifies that we want to write a character to the screen
-    mov bl,0x07         ; Specifies output text color.  Not required, but useful to know
+    mov bl,0x06         ; Specifies output text color.  Not required, but useful to know (Works only in video mode)
     mov bh,0x00         ; Page number.  Leave this alone.
     int 0x10            ; Signal video interrupt to BIOS
     retn
 
+;in text mode, this clears screen to defined color
+clrscr:
+    mov dx, 0 ; Set cursor to top left-most corner of screen
+    mov bh, 0
+    mov ah, 0x2
+    int 0x10
+    mov cx, 2000 ; print 2000 chars
+    mov bh, 0
+    mov bl, 0x21 ; green bg/blue fg
+    mov al, 0x20 ; blank char
+    mov ah, 0x9
+    int 0x10
+    ret
+
 ;data
-    MSG db 'Hello World!',0x0A,0
+    MSG db '...wait for it...',0x0A,0
 
 TIMES 510 - ($ - $$) db 0
 DW 0xAA55
