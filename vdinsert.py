@@ -26,6 +26,7 @@ def loadFiles():
 
 	#compile the assembly file
 	os.system("nasm -f bin -o boot.bin "+sys.argv[1])
+
 	if(os.path.exists("boot.bin")):
 		print "Compilation successful"
 		print "File size: "+str(os.path.getsize("boot.bin"))
