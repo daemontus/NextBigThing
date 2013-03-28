@@ -2,7 +2,8 @@
 [org 0x7C00]
 
 start:
-	call load_sector
+    call load_sector
+    lidt [idt_desc] ;load idt
 	lgdt [gdt_desc] ;load gdt
 	MOV EAX, CR0
 	OR AL, 1
@@ -11,8 +12,11 @@ start:
 	mov ax, 10h             ; Save data segment identifyer
     mov ds, ax              ; Move a valid data segment into the data segment register
     mov ss, ax              ; Move a valid data segment into the stack segment register
-    mov esp, 090000h        ; Move the stack pointer to 090000h
-	jmp 0x08:0x1000			;wanted to use LOC instead, but gives "op size not specified" err ?!?!
+    mov esp, 0090000h        ; Move the stack pointer to 090000h
+    ;mov dword [0xb8000], 0x07300730
+    sti
+    jmp 0x08:0x1000			;wanted to use LOC instead, but gives "op size not specified" err ?!?!
+    ;jmp $
 	retf
 
 
@@ -70,5 +74,133 @@ gdt_end:                ; Used to calculate the size of the GDT
 gdt_desc:                       ; The GDT descriptor
         dw gdt_end - gdt - 1    ; Limit (size)
         dd gdt                  ; Address of the GDT
+
+idt:
+
+zero_div:
+        dw 0x680 
+        dw 0x8
+        db 0
+        db 10101110b
+        dw 0
+INT_1: 
+        dw 0x6C0 
+        dw 0x8
+        db 0
+        db 10101110b
+        dw 0
+INT_2:
+        dw 0x700 
+        dw 0x8
+        db 0
+        db 10101110b
+        dw 0
+INT_3:
+        dw 0x740 
+        dw 0x8
+        db 0
+        db 10101110b
+        dw 0
+INT_4:
+        dw 0x780 
+        dw 0x8
+        db 0
+        db 10101110b
+        dw 0
+INT_5:
+        dw 0x7C0 
+        dw 0x8
+        db 0
+        db 10101110b
+        dw 0
+INT_6:
+        dw 0x800 
+        dw 0x8
+        db 0
+        db 10101110b
+        dw 0
+INT_7:
+        dw 0x840 
+        dw 0x8
+        db 0
+        db 10101110b
+        dw 0
+INT_8:
+        dw 0x880 
+        dw 0x8
+        db 0
+        db 10101110b
+        dw 0
+INT_9:
+        dw 0x8C0 
+        dw 0x8
+        db 0
+        db 10101110b
+        dw 0
+INT_A:
+        dw 0x900 
+        dw 0x8
+        db 0
+        db 10101110b
+        dw 0
+INT_B:
+        dw 0x940 
+        dw 0x8
+        db 0
+        db 10101110b
+        dw 0
+INT_C:
+        dw 0x980 
+        dw 0x8
+        db 0
+        db 10101110b
+        dw 0
+INT_D:
+        dw 0x10C0 
+        dw 0x8
+        db 0
+        db 10101110b
+        dw 0
+INT_E:
+        dw 0x1100 
+        dw 0x8
+        db 0
+        db 10101110b
+        dw 0
+INT_F:
+        dw 0x1140 
+        dw 0x8
+        db 0
+        db 10101110b
+        dw 0
+INT_10:
+        dw 0x1180 
+        dw 0x8
+        db 0
+        db 10101110b
+        dw 0
+INT_11:
+        dw 0x11C0 
+        dw 0x8
+        db 0
+        db 10101110b
+        dw 0
+INT_12:
+        dw 0x1200 
+        dw 0x8
+        db 0
+        db 10101110b
+        dw 0
+INT_13:
+        dw 0x1240
+        dw 0x8
+        db 0
+        db 10101110b
+        dw 0
+idt_end:
+
+idt_desc:
+    dw idt_end - idt - 1
+    dd idt
 
  LOC dw 0x1000

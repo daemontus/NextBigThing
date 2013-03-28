@@ -29,7 +29,7 @@ def loadFiles():
 		return	
 
 	#compile the assembly file
-	os.system("i386-elf-gcc -c -o "+tmpo+" "+sys.argv[1])
+	os.system("i386-elf-gcc -c -std=gnu99 -o "+tmpo+" "+sys.argv[1])
 
 	if(os.path.exists(tmpo)):
 		print "Compilation successful"
@@ -48,7 +48,7 @@ def loadFiles():
 	else:
 		print "Linking failed - check above for errors"
 		print
-		os.system("rm "+tmpb)
+		os.system("rm "+tmpo)
 		return
 
 

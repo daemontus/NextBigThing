@@ -102,7 +102,7 @@ print_string:           ; Expects null terminated message in si
 
 load_sector:                ;later rewrite to accept custom disc/memory locations
     mov ah,0x02 ;read  
-    mov al,0x02 ;num of sectors
+    mov al,0x03 ;num of sectors
     ;CX =       ---CH--- ---CL---
     ;cylinder : 76543210 98
     ;sector   :            543210
